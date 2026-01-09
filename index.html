@@ -135,6 +135,16 @@
             color: rgba(255,255,255,0.9);
         }
         
+        .nav-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .nav-card.disabled:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
         /* Info Section */
         .info-section {
             background: white;
@@ -216,6 +226,16 @@
             transform: translateX(5px);
         }
         
+        .resource-link.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .resource-link.disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
         .resource-link .icon {
             font-size: 2rem;
         }
@@ -228,6 +248,16 @@
         .resource-link .text p {
             font-size: 0.9rem;
             color: #718096;
+        }
+        
+        .resource-link .badge {
+            margin-left: auto;
+            background: #e2e8f0;
+            color: #718096;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
         
         /* Footer */
@@ -279,19 +309,19 @@
     <!-- Main Navigation Cards -->
     <div class="container">
         <div class="card-grid">
-            <a href="#" class="nav-card primary">
+            <a href="The_Accountability_Quest.pdf" class="nav-card primary" target="_blank">
                 <div class="icon">🎯</div>
                 <h3>Getting Started</h3>
                 <p>New to DAN? Start here to learn the basics</p>
             </a>
             
-            <a href=about class="nav-card">
+            <a href="dan-about.html" class="nav-card">
                 <div class="icon">📖</div>
                 <h3>About DAN</h3>
                 <p>Learn about our principles and how we work</p>
             </a>
             
-            <a href=createPartnership class="nav-card">
+            <a href="dan-written-statement-form.html" class="nav-card">
                 <div class="icon">✍️</div>
                 <h3>Create Partnership</h3>
                 <p>Fill out your Written Statement online</p>
@@ -329,39 +359,43 @@
     <section class="resources-section">
         <h2>Resources & Links</h2>
         <div class="resource-links">
-            <a href="#" class="resource-link">
+            <a href="#" class="resource-link disabled" onclick="return false;">
                 <div class="icon">💬</div>
                 <div class="text">
                     <h4>WhatsApp Group</h4>
                     <p>Join the discussion</p>
                 </div>
+                <span class="badge">COMING SOON</span>
             </a>
             
-            <a href="#" class="resource-link">
+            <a href="#" class="resource-link disabled" onclick="return false;">
                 <div class="icon">📊</div>
                 <div class="text">
                     <h4>Availability Spreadsheet</h4>
                     <p>Find partners & witnesses</p>
                 </div>
+                <span class="badge">COMING SOON</span>
             </a>
             
-            <a href="#" class="resource-link">
+            <a href="#" class="resource-link disabled" onclick="return false;">
                 <div class="icon">📚</div>
                 <div class="text">
                     <h4>Guides & Manuals</h4>
                     <p>Support resources</p>
                 </div>
+                <span class="badge">COMING SOON</span>
             </a>
             
-            <a href="#" class="resource-link">
+            <a href="#" class="resource-link disabled" onclick="return false;">
                 <div class="icon">📄</div>
                 <div class="text">
                     <h4>Download Charter</h4>
                     <p>Official DAN Charter PDF</p>
                 </div>
+                <span class="badge">COMING SOON</span>
             </a>
             
-            <a href="#" class="resource-link">
+            <a href="The_Accountability_Quest.pdf" class="resource-link" target="_blank">
                 <div class="icon">📖</div>
                 <div class="text">
                     <h4>Beginner's Guide</h4>
@@ -369,12 +403,13 @@
                 </div>
             </a>
             
-            <a href="#" class="resource-link">
+            <a href="#" class="resource-link disabled" onclick="return false;">
                 <div class="icon">🚩</div>
                 <div class="text">
                     <h4>Red Flags Guide</h4>
                     <p>Recognizing healthy partnerships</p>
                 </div>
+                <span class="badge">COMING SOON</span>
             </a>
         </div>
     </section>
@@ -387,28 +422,5 @@
             Founded on equality, autonomy, and trust
         </p>
     </footer>
-    
-    <script>
-        // Add your actual links here
-        const links = {
-            gettingStarted: 'getting-started.html',
-            about: 'dan-about.html',
-            createPartnership: 'dan-written-statement-form.html',
-            whatsapp: 'YOUR_WHATSAPP_GROUP_LINK',
-            spreadsheet: 'YOUR_SPREADSHEET_LINK',
-            guides: 'guides.html',
-            charter: 'DAN_Charter.pdf',
-            beginnersGuide: 'The_Accountability_Quest.pdf',
-            redFlags: 'red-flags-guide.html'
-        };
-        
-        // You can update these links as needed
-        document.querySelectorAll('.nav-card, .resource-link').forEach((card, index) => {
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('Link will go to the appropriate page. Update the href attributes with actual links.');
-            });
-        });
-    </script>
 </body>
 </html>
