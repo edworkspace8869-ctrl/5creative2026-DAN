@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAN Written Statement Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        input[type="radio"],
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .help-text {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+        
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .partner-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        button {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .penalty-select {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .partner-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📝 Written Statement Generator</h1>
+        <p>Create your DAN Accountability Partnership Agreement</p>
+    </header>
+    
+    <div class="container">
+        <div class="info-box">
+            <strong>Welcome!</strong> This form will guide you through creating your Written Statement. Take your time, discuss with your partner(s), and fill it out together. You can generate a PDF when you're ready.
+        </div>
+        
+        <form id="statementForm">
+            <!-- Basic Information -->
+            <div class="form-card">
+                <h2 class="section-title">Partnership Information</h2>
+                
+                <div class="form-group">
+                    <label>Date of Agreement</label>
+                    <input type="date" id="agreementDate" required>
+                </div>
+                
+                <div class="partner-inputs">
+                    <div class="form-group">
+                        <label>Partner A Name *</label>
+                        <input type="text" id="partnerAName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Partner B Name *</label>
+                        <input type="text" id="partnerBName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Additional Partners (if applicable)</label>
+                    <input type="text" id="additionalPartners" placeholder="Leave blank if only 2 partners">
+                    <div class="help-text">Separate multiple names with commas</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Witness Name <span id="witnessRequired">(required for 2-person partnerships)</span></label>
+                    <input type="text" id="witnessName">
+                </div>
+                
+                <div class="form-group">
+                    <label>Partnership Duration *</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="indefinite" name="duration" value="indefinite" checked>
+                            <label for="indefinite" style="margin: 0;">Indefinite (until SPM or mutual dissolution)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="fixedTerm" name="duration" value="fixed">
+                            <label for="fixedTerm" style="margin: 0;">Fixed term</label>
+                        </div>
+                    </div>
+                    <div id="fixedTermInputs" class="hidden" style="margin-top: 1rem;">
+                        <div class="partner-inputs">
+                            <div>
+                                <label>From:</label>
+                                <input type="date" id="durationFrom">
+                            </div>
+                            <div>
+                                <label>To:</label>
+                                <input type="date" id="durationTo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 1: Commitments -->
+            <div class="form-card">
+                <h2 class="section-title">Section 1: Personal Commitments</h2>
+                
+                <div class="form-group">
+                    <label>Partner A's Commitment *</label>
+                    <input type="text" id="commitmentA" placeholder="e.g., Study mathematics daily" required>
+                    <label style="margin-top: 1rem;">Specific Details *</label>
+                    <textarea id="commitmentADetails" placeholder="e.g., Study mathematics for 30 minutes daily between 7-8 PM" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Partner B's Commitment *</label>
+                    <input type="text" id="commitmentB" placeholder="e.g., Complete homework on time" required>
+                    <label style="margin-top: 1rem;">Specific Details *</label>
+                    <textarea id="commitmentBDetails" placeholder="e.g., Complete all homework before 10 PM every night" required></textarea>
+                </div>
+            </div>
+            
+            <!-- Section 2: Reporting -->
+            <div class="form-card">
+                <h2 class="section-title">Section 2: Reporting Protocol</h2>
+                
+                <div class="form-group">
+                    <label>Reporting Frequency *</label>
+                    <select id="reportingFreq" required>
+                        <option value="">Select frequency...</option>
+                        <option value="daily">Daily</option>
+                        <option value="everyOther">Every other day</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="text" id="reportingFreqOther" class="hidden" placeholder="Please specify" style="margin-top: 0.5rem;">
+                    <input type="text" id="weeklyDay" class="hidden" placeholder="Specify day (e.g., Monday)" style="margin-top: 0.5rem;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Reporting Method *</label>
+                    <select id="reportingMethod" required>
+                        <option value="">Select method...</option>
+                        <option value="whatsapp">WhatsApp message</option>
+                        <option value="inperson">In-person check-in</option>
+                        <option value="voice">Voice call</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="text" id="reportingMethodOther" class="hidden" placeholder="Please specify" style="margin-top: 0.5rem;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Reporting Format</label>
+                    <textarea id="reportingFormat" placeholder='Example: "Day [X]: [Success/Did not meet commitment] - [Optional brief note]"'>Day [X]: [Success/Did not meet commitment] - [Optional brief note]</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reporting Deadline *</label>
+                    <input type="text" id="reportingDeadline" placeholder="e.g., By 9 PM daily" required>
+                </div>
+            </div>
+            
+            <!-- Section 4: Penalties -->
+            <div class="form-card">
+                <h2 class="section-title">Section 4: Agreed Penalties</h2>
+                
+                <div class="warning-box">
+                    <strong>Important Reminders:</strong>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>All penalties must be meaningful but not punitive</li>
+                        <li>Maximum financial penalty: RM10</li>
+                        <li>Prohibited: Humiliation, degradation, physical penalties, school rule violations</li>
+                    </ul>
+                </div>
+                
+                <div class="form-group">
+                    <label>When Partner A does not meet their commitment *</label>
+                    <select id="penaltyACat" class="penalty-select" required>
+                        <option value="">Select penalty category...</option>
+                        <option value="social">Social/Reciprocal</option>
+                        <option value="service">Service-based</option>
+                        <option value="selfimprovement">Self-improvement</option>
+                        <option value="financial">Financial (small amounts)</option>
+                        <option value="creative">Creative/Encouragement</option>
+                    </select>
+                    <textarea id="penaltyA" placeholder="Describe the specific penalty..." required></textarea>
+                    <div class="help-text">Examples: Buy partner a drink, Help with homework for 30 min, Additional 15 min study session</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>When Partner B does not meet their commitment *</label>
+                    <select id="penaltyBCat" class="penalty-select" required>
+                        <option value="">Select penalty category...</option>
+                        <option value="social">Social/Reciprocal</option>
+                        <option value="service">Service-based</option>
+                        <option value="selfimprovement">Self-improvement</option>
+                        <option value="financial">Financial (small amounts)</option>
+                        <option value="creative">Creative/Encouragement</option>
+                    </select>
+                    <textarea id="penaltyB" placeholder="Describe the specific penalty..." required></textarea>
+                </div>
+            </div>
+            
+            <!-- Section 5: Support Protocol -->
+            <div class="form-card">
+                <h2 class="section-title">Section 5: Support Protocol</h2>
+                
+                <div class="info-box">
+                    <strong>What should happen if I struggle?</strong><br>
+                    The accountability partner will:
+                    <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>Ask: "Is this rule too demanding?"</li>
+                        <li>Discuss: Explore what's making it difficult</li>
+                        <li>Collaborate: Identify alternative approaches or modifications</li>
+                        <li>Prioritize: Focus on wellbeing over rigid enforcement</li>
+                    </ol>
+                </div>
+                
+                <div class="form-group">
+                    <label>If penalties become difficult to fulfill, we agree to:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="support1" checked>
+                            <label for="support1" style="margin: 0;">Discuss alternatives openly</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="support2" checked>
+                            <label for="support2" style="margin: 0;">Involve our witness for mediation</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="support3" checked>
+                            <label for="support3" style="margin: 0;">Modify the penalty with mutual consent</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="support4" checked>
+                            <label for="support4" style="margin: 0;">Reassess if this partnership remains nurturing</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 8: Acknowledgment -->
+            <div class="form-card">
+                <h2 class="section-title">Section 8: Acknowledgment</h2>
+                
+                <div class="form-group">
+                    <label>We, the undersigned, acknowledge that:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack1" required>
+                            <label for="ack1" style="margin: 0;">We have read and understood the DAN Charter *</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack2" required>
+                            <label for="ack2" style="margin: 0;">This partnership is entirely voluntary *</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack3" required>
+                            <label for="ack3" style="margin: 0;">All reports will be honest, unilateral declarations *</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack4" required>
+                            <label for="ack4" style="margin: 0;">We understand that dishonesty deceives only our future selves *</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack5" required>
+                            <label for="ack5" style="margin: 0;">This Statement does not contradict the DAN Charter *</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack6" required>
+                            <label for="ack6" style="margin: 0;">We prioritize mutual support and personal growth over rigid rule enforcement *</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="ack7" required>
+                            <label for="ack7" style="margin: 0;">We respect each other's autonomy, dignity, and privacy *</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="form-card">
+                <h2 class="section-title">Notes & Reflections</h2>
+                
+                <div class="form-group">
+                    <label>Additional agreements, clarifications, or personal notes (optional)</label>
+                    <textarea id="notes" placeholder="Add any additional information you'd like to include..."></textarea>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+                <button type="submit" class="btn-primary">Generate PDF</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Set today's date as default
+        document.getElementById('agreementDate').valueAsDate = new Date();
+        
+        // Show/hide fixed term inputs
+        document.querySelectorAll('input[name="duration"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const fixedInputs = document.getElementById('fixedTermInputs');
+                fixedInputs.classList.toggle('hidden', e.target.value !== 'fixed');
+            });
+        });
+        
+        // Show/hide reporting frequency other input
+        document.getElementById('reportingFreq').addEventListener('change', (e) => {
+            const otherInput = document.getElementById('reportingFreqOther');
+            const weeklyInput = document.getElementById('weeklyDay');
+            otherInput.classList.toggle('hidden', e.target.value !== 'other');
+            weeklyInput.classList.toggle('hidden', e.target.value !== 'weekly');
+        });
+        
+        // Show/hide reporting method other input
+        document.getElementById('reportingMethod').addEventListener('change', (e) => {
+            const otherInput = document.getElementById('reportingMethodOther');
+            otherInput.classList.toggle('hidden', e.target.value !== 'other');
+        });
+        
+        // Update witness requirement text
+        document.getElementById('additionalPartners').addEventListener('input', (e) => {
+            const witnessReq = document.getElementById('witnessRequired');
+            if (e.target.value.trim()) {
+                witnessReq.textContent = '(optional for 3+ person partnerships)';
+            } else {
+                witnessReq.textContent = '(required for 2-person partnerships)';
+            }
+        });
+        
+        function resetForm() {
+            if (confirm('Are you sure you want to clear all fields?')) {
+                document.getElementById('statementForm').reset();
+                document.getElementById('agreementDate').valueAsDate = new Date();
+            }
+        }
+        
+        // PDF Generation
+        document.getElementById('statementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let y = 20;
+            const lineHeight = 7;
+            const pageHeight = 280;
+            const margin = 20;
+            
+            function checkPageBreak() {
+                if (y > pageHeight) {
+                    doc.addPage();
+                    y = 20;
+                }
+            }
+            
+            function addText(text, size = 11, style = 'normal') {
+                doc.setFontSize(size);
+                doc.setFont('helvetica', style);
+                const lines = doc.splitTextToSize(text, 170);
+                lines.forEach(line => {
+                    checkPageBreak();
+                    doc.text(line, margin, y);
+                    y += lineHeight;
+                });
+            }
+            
+            function addBoldText(text) {
+                addText(text, 11, 'bold');
+            }
+            
+            // Title
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('WRITTEN STATEMENT', 105, y, { align: 'center' });
+            y += lineHeight;
+            doc.setFontSize(12);
+            doc.text('Decentralised Accountability Network (DAN)', 105, y, { align: 'center' });
+            y += lineHeight * 2;
+            
+            // Date
+            addText(`Date of Agreement: ${document.getElementById('agreementDate').value}`);
+            y += lineHeight;
+            
+            // Partnership Information
+            addBoldText('PARTNERSHIP INFORMATION');
+            y += 2;
+            addText(`Partner A Name: ${document.getElementById('partnerAName').value}`);
+            addText(`Partner B Name: ${document.getElementById('partnerBName').value}`);
+            
+            const additionalPartners = document.getElementById('additionalPartners').value;
+            if (additionalPartners) {
+                addText(`Additional Partners: ${additionalPartners}`);
+            }
+            
+            const witnessName = document.getElementById('witnessName').value;
+            addText(`Witness Name: ${witnessName || '_________________'}`);
+            
+            const duration = document.querySelector('input[name="duration"]:checked').value;
+            if (duration === 'indefinite') {
+                addText('Partnership Duration: Indefinite (until SPM or mutual dissolution)');
+            } else {
+                const from = document.getElementById('durationFrom').value;
+                const to = document.getElementById('durationTo').value;
+                addText(`Partnership Duration: Fixed term from ${from} to ${to}`);
+            }
+            
+            y += lineHeight;
+            
+            // Section 1: Commitments
+            addBoldText('SECTION 1: PERSONAL COMMITMENTS');
+            y += 2;
+            addBoldText("Partner A's Commitment");
+            addText(`Rule/Habit: ${document.getElementById('commitmentA').value}`);
+            addText(`Details: ${document.getElementById('commitmentADetails').value}`);
+            y += 3;
+            addBoldText("Partner B's Commitment");
+            addText(`Rule/Habit: ${document.getElementById('commitmentB').value}`);
+            addText(`Details: ${document.getElementById('commitmentBDetails').value}`);
+            
+            y += lineHeight;
+            
+            // Section 2: Reporting
+            addBoldText('SECTION 2: REPORTING PROTOCOL');
+            y += 2;
+            
+            let freqText = document.getElementById('reportingFreq').value;
+            if (freqText === 'daily') freqText = 'Daily';
+            else if (freqText === 'everyOther') freqText = 'Every other day';
+            else if (freqText === 'weekly') freqText = `Weekly (${document.getElementById('weeklyDay').value})`;
+            else if (freqText === 'other') freqText = document.getElementById('reportingFreqOther').value;
+            addText(`Reporting Frequency: ${freqText}`);
+            
+            let methodText = document.getElementById('reportingMethod').value;
+            if (methodText === 'whatsapp') methodText = 'WhatsApp message';
+            else if (methodText === 'inperson') methodText = 'In-person check-in';
+            else if (methodText === 'voice') methodText = 'Voice call';
+            else if (methodText === 'other') methodText = document.getElementById('reportingMethodOther').value;
+            addText(`Reporting Method: ${methodText}`);
+            
+            addText(`Reporting Format: ${document.getElementById('reportingFormat').value}`);
+            addText(`Reporting Deadline: ${document.getElementById('reportingDeadline').value}`);
+            
+            y += lineHeight;
+            
+            // Section 3: Rights and Responsibilities
+            addBoldText('SECTION 3: RIGHTS AND RESPONSIBILITIES');
+            y += 2;
+            addBoldText('All Partners Have the Right To:');
+            addText('• Receive honest reports from their accountability partner(s)');
+            addText('• Request clarification or support when struggling');
+            addText('• Propose modifications to commitments if they prove unrealistic');
+            addText('• Suspend or dissolve the partnership if it becomes non-nurturing');
+            addText('• Privacy regarding personal information beyond the scope of this agreement');
+            y += 3;
+            addBoldText('All Partners Have the Responsibility To:');
+            addText('• Submit honest, unilateral reports as agreed');
+            addText('• Support their partner(s) with encouragement and constructive feedback');
+            addText('• Inquire with compassion when partner(s) struggle');
+            addText("• Respect the autonomy and dignity of their partner(s)");
+            addText('• Uphold the principles of the DAN Charter');
+            
+            if (witnessName) {
+                y += 3;
+                addBoldText('Witness Responsibilities:');
+                addText('• Review this Statement to ensure compliance with the Charter');
+                addText('• Be available for mediation if both parties request assistance');
+                addText('• Maintain confidentiality of partnership matters');
+            }
+            
+            y += lineHeight;
+            
+            // Section 4: Penalties
+            addBoldText('SECTION 4: AGREED PENALTIES');
+            y += 2;
+            addText(`When Partner A does not meet their commitment:`);
+            addText(`Penalty: ${document.getElementById('penaltyA').value}`);
+            y += 3;
+            addText(`When Partner B does not meet their commitment:`);
+            addText(`Penalty: ${document.getElementById('penaltyB').value}`);
+            y += 3;
+            addBoldText('Important Reminders:');
+            addText('• All penalties must be meaningful but not punitive');
+            addText('• Penalties must respect dignity and wellbeing');
+            addText('• Maximum financial penalty: RM10');
+            addText('• Prohibited: Humiliation, degradation, physical penalties, violations of school rules');
+            
+            y += lineHeight;
+            
+            // Section 5: Support Protocol
+            checkPageBreak();
+            addBoldText('SECTION 5: SUPPORT PROTOCOL');
+            y += 2;
+            addText('What should happen if I struggle to meet my commitment?');
+            addText('We agree that the accountability partner will:');
+            addText('1. Ask: "Is this rule too demanding?"');
+            addText('2. Discuss: Explore what\'s making it difficult');
+            addText('3. Collaborate: Identify alternative approaches or modifications');
+            addText('4. Prioritize: Focus on wellbeing over rigid enforcement');
+            y += 3;
+            addText('If penalties become difficult to fulfill, we agree to:');
+            if (document.getElementById('support1').checked) addText('• Discuss alternatives openly');
+            if (document.getElementById('support2').checked) addText('• Involve our witness for mediation');
+            if (document.getElementById('support3').checked) addText('• Modify the penalty with mutual consent');
+            if (document.getElementById('support4').checked) addText('• Reassess if this partnership remains nurturing');
+            
+            y += lineHeight;
+            
+            // Section 6: Conflict Resolution
+            checkPageBreak();
+            addBoldText('SECTION 6: CONFLICT RESOLUTION');
+            y += 2;
+            addText('If conflicts arise in this partnership, we agree to:');
+            addText('1. First attempt to resolve the issue between ourselves through honest communication');
+            addText('2. If both parties agree, involve our witness or another DAN member as mediator');
+            addText('3. If the partnership no longer feels nurturing, either party may initiate suspension or dissolution');
+            y += 3;
+            addText('Red flags we will watch for:');
+            addText('• Feeling pressured or coerced');
+            addText('• Penalties becoming punitive rather than supportive');
+            addText('• Resentment building in the relationship');
+            addText('• Loss of trust or honesty');
+            addText('• The partnership causing stress rather than support');
+            
+            y += lineHeight;
+            
+            // Section 7: Modification and Dissolution
+            checkPageBreak();
+            addBoldText('SECTION 7: MODIFICATION AND DISSOLUTION');
+            y += 2;
+            addText('Modifications to this Statement: Any changes to this Written Statement require agreement from all partners and must comply with the DAN Charter.');
+            y += 3;
+            addText('Suspension: Either party may temporarily suspend this partnership during conflicts. We will communicate openly about the suspension and attempt resolution.');
+            y += 3;
+            addText('Dissolution: Either party may dissolve this partnership if:');
+            addText('• The relationship no longer feels nurturing, AND');
+            addText('• We have attempted at least once to resolve issues');
+            addText('No further justification is required beyond these criteria.');
+            
+            y += lineHeight;
+            
+            // Section 8: Acknowledgment
+            checkPageBreak();
+            addBoldText('SECTION 8: ACKNOWLEDGMENT');
+            y += 2;
+            addText('We, the undersigned, acknowledge that:');
+            addText('• We have read and understood the DAN Charter');
+            addText('• This partnership is entirely voluntary');
+            addText('• All reports will be honest, unilateral declarations');
+            addText('• We understand that dishonesty deceives only our future selves');
+            addText('• This Statement does not contradict the DAN Charter');
+            addText('• We prioritize mutual support and personal growth over rigid rule enforcement');
+            addText("• We respect each other's autonomy, dignity, and privacy");
+            
+            y += lineHeight;
+            
+            // Notes
+            const notes = document.getElementById('notes').value;
+            if (notes) {
+                checkPageBreak();
+                addBoldText('NOTES & REFLECTIONS');
+                y += 2;
+                addText(notes);
+                y += lineHeight;
+            }
+            
+            // Signatures
+            checkPageBreak();
+            y += lineHeight;
+            addBoldText('SIGNATURES');
+            y += lineHeight;
+            
+            addText('Partner A: ___________________________ Date: _______________');
+            y += lineHeight * 2;
+            addText('Partner B: ___________________________ Date: _______________');
+            y += lineHeight * 2;
+            
+            if (additionalPartners) {
+                addText('Additional Partner(s): ___________________________ Date: _______________');
+                y += lineHeight * 2;
+            }
+            
+            if (witnessName || !additionalPartners) {
+                addText('Witness: ___________________________ Date: _______________');
+                addText('I have reviewed this Written Statement and confirm it complies with the DAN Charter.');
+                y += lineHeight * 2;
+            }
+            
+            // Footer
+            checkPageBreak();
+            y += lineHeight;
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'italic');
+            doc.text('This Written Statement is governed by the Charter of the Decentralised Accountability Network (DAN).', 105, y, { align: 'center' });
+            y += 5;
+            doc.text('In case of any conflict between this Statement and the Charter, the Charter takes precedence.', 105, y, { align: 'center' });
+            
+            // Save PDF
+            const partnerA = document.getElementById('partnerAName').value;
+            const partnerB = document.getElementById('partnerBName').value;
+            const date = document.getElementById('agreementDate').value;
+            doc.save(`DAN_Written_Statement_${partnerA}_${partnerB}_${date}.pdf`);
+        });
+    </script>
+</body>
+</html>

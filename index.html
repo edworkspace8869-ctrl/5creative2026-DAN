@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAN - Decentralised Accountability Network</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.95;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-description {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+        }
+        
+        /* Navigation Cards */
+        .container {
+            max-width: 1200px;
+            margin: -3rem auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .nav-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+        }
+        
+        .nav-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .nav-card h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-card p {
+            color: #718096;
+            font-size: 0.95rem;
+        }
+        
+        .nav-card.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .nav-card.primary h3 {
+            color: white;
+        }
+        
+        .nav-card.primary p {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        /* Info Section */
+        .info-section {
+            background: white;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .info-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .principles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .principle {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .principle .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .principle h3 {
+            color: #764ba2;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Resources Section */
+        .resources-section {
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            padding: 0 2rem;
+        }
+        
+        .resources-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .resource-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .resource-link {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .resource-link:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .resource-link .icon {
+            font-size: 2rem;
+        }
+        
+        .resource-link .text h4 {
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+        
+        .resource-link .text p {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        footer p {
+            margin: 0.5rem 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                margin-top: -2rem;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>DAN</h1>
+            <p class="tagline">Decentralised Accountability Network</p>
+            <p class="subtitle">5 Creative 2026 | Until SPM 2026</p>
+            <p class="hero-description">
+                A supportive space where we voluntarily commit to personal rules and habits, 
+                and hold each other accountable through mutual respect and shared responsibility.
+            </p>
+        </div>
+    </section>
+    
+    <!-- Main Navigation Cards -->
+    <div class="container">
+        <div class="card-grid">
+            <a href="#" class="nav-card primary">
+                <div class="icon">🎯</div>
+                <h3>Getting Started</h3>
+                <p>New to DAN? Start here to learn the basics</p>
+            </a>
+            
+            <a href="#" class="nav-card">
+                <div class="icon">📖</div>
+                <h3>About DAN</h3>
+                <p>Learn about our principles and how we work</p>
+            </a>
+            
+            <a href="#" class="nav-card">
+                <div class="icon">✍️</div>
+                <h3>Create Partnership</h3>
+                <p>Fill out your Written Statement online</p>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Core Principles -->
+    <section class="info-section">
+        <div class="info-content">
+            <h2>Our Core Principles</h2>
+            <div class="principles">
+                <div class="principle">
+                    <div class="emoji">🤝</div>
+                    <h3>Decentralization</h3>
+                    <p>No hierarchy. Every member has equal rights and responsibilities.</p>
+                </div>
+                
+                <div class="principle">
+                    <div class="emoji">🔒</div>
+                    <h3>Privacy Protection</h3>
+                    <p>Your personal information stays personal. We only ask what's needed.</p>
+                </div>
+                
+                <div class="principle">
+                    <div class="emoji">✨</div>
+                    <h3>Personal Autonomy</h3>
+                    <p>Entirely voluntary. You choose your commitments, partners, and terms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Resources Section -->
+    <section class="resources-section">
+        <h2>Resources & Links</h2>
+        <div class="resource-links">
+            <a href="#" class="resource-link">
+                <div class="icon">💬</div>
+                <div class="text">
+                    <h4>WhatsApp Group</h4>
+                    <p>Join the discussion</p>
+                </div>
+            </a>
+            
+            <a href="#" class="resource-link">
+                <div class="icon">📊</div>
+                <div class="text">
+                    <h4>Availability Spreadsheet</h4>
+                    <p>Find partners & witnesses</p>
+                </div>
+            </a>
+            
+            <a href="#" class="resource-link">
+                <div class="icon">📚</div>
+                <div class="text">
+                    <h4>Guides & Manuals</h4>
+                    <p>Support resources</p>
+                </div>
+            </a>
+            
+            <a href="#" class="resource-link">
+                <div class="icon">📄</div>
+                <div class="text">
+                    <h4>Download Charter</h4>
+                    <p>Official DAN Charter PDF</p>
+                </div>
+            </a>
+            
+            <a href="#" class="resource-link">
+                <div class="icon">📖</div>
+                <div class="text">
+                    <h4>Beginner's Guide</h4>
+                    <p>The Accountability Quest</p>
+                </div>
+            </a>
+            
+            <a href="#" class="resource-link">
+                <div class="icon">🚩</div>
+                <div class="text">
+                    <h4>Red Flags Guide</h4>
+                    <p>Recognizing healthy partnerships</p>
+                </div>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <p><strong>Decentralised Accountability Network (DAN)</strong></p>
+        <p>5 Creative 2026 | Building better habits together</p>
+        <p style="margin-top: 1rem; opacity: 0.8; font-size: 0.9rem;">
+            Founded on equality, autonomy, and trust
+        </p>
+    </footer>
+    
+    <script>
+        // Add your actual links here
+        const links = {
+            gettingStarted: 'getting-started.html',
+            about: 'about.html',
+            createPartnership: 'written-statement-generator.html',
+            whatsapp: 'YOUR_WHATSAPP_GROUP_LINK',
+            spreadsheet: 'YOUR_SPREADSHEET_LINK',
+            guides: 'guides.html',
+            charter: 'DAN_Charter.pdf',
+            beginnersGuide: 'The_Accountability_Quest.pdf',
+            redFlags: 'red-flags-guide.html'
+        };
+        
+        // You can update these links as needed
+        document.querySelectorAll('.nav-card, .resource-link').forEach((card, index) => {
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Link will go to the appropriate page. Update the href attributes with actual links.');
+            });
+        });
+    </script>
+</body>
+</html>
