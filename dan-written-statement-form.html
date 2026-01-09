@@ -141,6 +141,55 @@
             gap: 1rem;
         }
         
+        .partner-field {
+            margin-bottom: 1rem;
+        }
+        
+        .partner-field-with-button {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+        
+        .partner-field-with-button input {
+            flex: 1;
+        }
+        
+        .btn-add,
+        .btn-remove {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .btn-add {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-add:hover {
+            background: #38a169;
+        }
+        
+        .btn-add:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+        .btn-remove {
+            background: #f56565;
+            color: white;
+        }
+        
+        .btn-remove:hover {
+            background: #e53e3e;
+        }
+        
         .button-group {
             display: flex;
             gap: 1rem;
@@ -222,27 +271,41 @@
                     <input type="date" id="agreementDate" required>
                 </div>
                 
-                <div class="partner-inputs">
-                    <div class="form-group">
-                        <label>Partner A Name *</label>
-                        <input type="text" id="partnerAName" required>
+                <div class="partner-field">
+                    <label>Partner A Name *</label>
+                    <input type="text" id="partnerAName" required>
+                </div>
+                
+                <div class="partner-field">
+                    <label>Partner B Name *</label>
+                    <input type="text" id="partnerBName" required>
+                </div>
+                
+                <div id="partnerCField" class="partner-field hidden">
+                    <label>Partner C Name *</label>
+                    <div class="partner-field-with-button">
+                        <input type="text" id="partnerCName">
+                        <button type="button" class="btn-remove" onclick="removePartner('C')">Remove</button>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Partner B Name *</label>
-                        <input type="text" id="partnerBName" required>
+                </div>
+                
+                <div id="partnerDField" class="partner-field hidden">
+                    <label>Partner D Name *</label>
+                    <div class="partner-field-with-button">
+                        <input type="text" id="partnerDName">
+                        <button type="button" class="btn-remove" onclick="removePartner('D')">Remove</button>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label>Additional Partners (if applicable)</label>
-                    <input type="text" id="additionalPartners" placeholder="Leave blank if only 2 partners">
-                    <div class="help-text">Separate multiple names with commas</div>
+                    <button type="button" id="addPartnerBtn" class="btn-add" onclick="addPartner()">+ Add Partner</button>
+                    <div class="help-text">You can have 2-4 partners in total</div>
                 </div>
                 
                 <div class="form-group">
                     <label>Witness Name <span id="witnessRequired">(required for 2-person partnerships)</span></label>
                     <input type="text" id="witnessName">
+                    <div class="help-text">Optional for partnerships with 3 or more people</div>
                 </div>
                 
                 <div class="form-group">
@@ -288,6 +351,20 @@
                     <input type="text" id="commitmentB" placeholder="e.g., Complete homework on time" required>
                     <label style="margin-top: 1rem;">Specific Details *</label>
                     <textarea id="commitmentBDetails" placeholder="e.g., Complete all homework before 10 PM every night" required></textarea>
+                </div>
+                
+                <div id="commitmentCField" class="form-group hidden">
+                    <label>Partner C's Commitment *</label>
+                    <input type="text" id="commitmentC" placeholder="e.g., Read for 20 minutes daily">
+                    <label style="margin-top: 1rem;">Specific Details *</label>
+                    <textarea id="commitmentCDetails" placeholder="e.g., Read any book for 20 minutes before bed"></textarea>
+                </div>
+                
+                <div id="commitmentDField" class="form-group hidden">
+                    <label>Partner D's Commitment *</label>
+                    <input type="text" id="commitmentD" placeholder="e.g., Exercise three times a week">
+                    <label style="margin-top: 1rem;">Specific Details *</label>
+                    <textarea id="commitmentDDetails" placeholder="e.g., 30-minute workout every Monday, Wednesday, and Friday"></textarea>
                 </div>
             </div>
             
@@ -369,6 +446,32 @@
                         <option value="creative">Creative/Encouragement</option>
                     </select>
                     <textarea id="penaltyB" placeholder="Describe the specific penalty..." required></textarea>
+                </div>
+                
+                <div id="penaltyCField" class="form-group hidden">
+                    <label>When Partner C does not meet their commitment *</label>
+                    <select id="penaltyCCat" class="penalty-select">
+                        <option value="">Select penalty category...</option>
+                        <option value="social">Social/Reciprocal</option>
+                        <option value="service">Service-based</option>
+                        <option value="selfimprovement">Self-improvement</option>
+                        <option value="financial">Financial (small amounts)</option>
+                        <option value="creative">Creative/Encouragement</option>
+                    </select>
+                    <textarea id="penaltyC" placeholder="Describe the specific penalty..."></textarea>
+                </div>
+                
+                <div id="penaltyDField" class="form-group hidden">
+                    <label>When Partner D does not meet their commitment *</label>
+                    <select id="penaltyDCat" class="penalty-select">
+                        <option value="">Select penalty category...</option>
+                        <option value="social">Social/Reciprocal</option>
+                        <option value="service">Service-based</option>
+                        <option value="selfimprovement">Self-improvement</option>
+                        <option value="financial">Financial (small amounts)</option>
+                        <option value="creative">Creative/Encouragement</option>
+                    </select>
+                    <textarea id="penaltyD" placeholder="Describe the specific penalty..."></textarea>
                 </div>
             </div>
             
@@ -468,8 +571,96 @@
     </div>
     
     <script>
+        let partnerCount = 2;
+        
         // Set today's date as default
         document.getElementById('agreementDate').valueAsDate = new Date();
+        
+        // Add partner function
+        function addPartner() {
+            if (partnerCount >= 4) return;
+            
+            partnerCount++;
+            const partnerLetter = String.fromCharCode(65 + partnerCount - 1); // C or D
+            
+            // Show partner field
+            document.getElementById(`partner${partnerLetter}Field`).classList.remove('hidden');
+            document.getElementById(`partner${partnerLetter}Name`).required = true;
+            
+            // Show commitment field
+            document.getElementById(`commitment${partnerLetter}Field`).classList.remove('hidden');
+            document.getElementById(`commitment${partnerLetter}`).required = true;
+            document.getElementById(`commitment${partnerLetter}Details`).required = true;
+            
+            // Show penalty field
+            document.getElementById(`penalty${partnerLetter}Field`).classList.remove('hidden');
+            document.getElementById(`penalty${partnerLetter}Cat`).required = true;
+            document.getElementById(`penalty${partnerLetter}`).required = true;
+            
+            // Update witness requirement
+            updateWitnessRequirement();
+            
+            // Disable button if at max
+            if (partnerCount >= 4) {
+                document.getElementById('addPartnerBtn').disabled = true;
+            }
+        }
+        
+        // Remove partner function
+        function removePartner(letter) {
+            // Hide and clear the field
+            document.getElementById(`partner${letter}Field`).classList.add('hidden');
+            document.getElementById(`partner${letter}Name`).value = '';
+            document.getElementById(`partner${letter}Name`).required = false;
+            
+            // Hide and clear commitment
+            document.getElementById(`commitment${letter}Field`).classList.add('hidden');
+            document.getElementById(`commitment${letter}`).value = '';
+            document.getElementById(`commitment${letter}`).required = false;
+            document.getElementById(`commitment${letter}Details`).value = '';
+            document.getElementById(`commitment${letter}Details`).required = false;
+            
+            // Hide and clear penalty
+            document.getElementById(`penalty${letter}Field`).classList.add('hidden');
+            document.getElementById(`penalty${letter}Cat`).value = '';
+            document.getElementById(`penalty${letter}Cat`).required = false;
+            document.getElementById(`penalty${letter}`).value = '';
+            document.getElementById(`penalty${letter}`).required = false;
+            
+            // If removing D, we go back to 3 partners
+            if (letter === 'D') {
+                partnerCount = 3;
+            } else if (letter === 'C') {
+                // If removing C and D exists, shift D to C
+                if (!document.getElementById('partnerDField').classList.contains('hidden')) {
+                    document.getElementById('partnerCName').value = document.getElementById('partnerDName').value;
+                    document.getElementById('commitmentC').value = document.getElementById('commitmentD').value;
+                    document.getElementById('commitmentCDetails').value = document.getElementById('commitmentDDetails').value;
+                    document.getElementById('penaltyCCat').value = document.getElementById('penaltyDCat').value;
+                    document.getElementById('penaltyC').value = document.getElementById('penaltyD').value;
+                    
+                    removePartner('D');
+                } else {
+                    partnerCount = 2;
+                }
+            }
+            
+            // Re-enable add button
+            document.getElementById('addPartnerBtn').disabled = false;
+            
+            // Update witness requirement
+            updateWitnessRequirement();
+        }
+        
+        // Update witness requirement text
+        function updateWitnessRequirement() {
+            const witnessReq = document.getElementById('witnessRequired');
+            if (partnerCount > 2) {
+                witnessReq.textContent = '(optional for 3+ person partnerships)';
+            } else {
+                witnessReq.textContent = '(required for 2-person partnerships)';
+            }
+        }
         
         // Show/hide fixed term inputs
         document.querySelectorAll('input[name="duration"]').forEach(radio => {
@@ -493,20 +684,19 @@
             otherInput.classList.toggle('hidden', e.target.value !== 'other');
         });
         
-        // Update witness requirement text
-        document.getElementById('additionalPartners').addEventListener('input', (e) => {
-            const witnessReq = document.getElementById('witnessRequired');
-            if (e.target.value.trim()) {
-                witnessReq.textContent = '(optional for 3+ person partnerships)';
-            } else {
-                witnessReq.textContent = '(required for 2-person partnerships)';
-            }
-        });
-        
         function resetForm() {
             if (confirm('Are you sure you want to clear all fields?')) {
                 document.getElementById('statementForm').reset();
                 document.getElementById('agreementDate').valueAsDate = new Date();
+                
+                // Reset partner count
+                if (partnerCount > 2) {
+                    ['C', 'D'].forEach(letter => {
+                        if (!document.getElementById(`partner${letter}Field`).classList.contains('hidden')) {
+                            removePartner(letter);
+                        }
+                    });
+                }
             }
         }
         
@@ -563,13 +753,19 @@
             addText(`Partner A Name: ${document.getElementById('partnerAName').value}`);
             addText(`Partner B Name: ${document.getElementById('partnerBName').value}`);
             
-            const additionalPartners = document.getElementById('additionalPartners').value;
-            if (additionalPartners) {
-                addText(`Additional Partners: ${additionalPartners}`);
+            if (partnerCount >= 3) {
+                addText(`Partner C Name: ${document.getElementById('partnerCName').value}`);
+            }
+            if (partnerCount >= 4) {
+                addText(`Partner D Name: ${document.getElementById('partnerDName').value}`);
             }
             
             const witnessName = document.getElementById('witnessName').value;
-            addText(`Witness Name: ${witnessName || '_________________'}`);
+            if (witnessName) {
+                addText(`Witness Name: ${witnessName}`);
+            } else if (partnerCount === 2) {
+                addText(`Witness Name: _________________`);
+            }
             
             const duration = document.querySelector('input[name="duration"]:checked').value;
             if (duration === 'indefinite') {
@@ -585,13 +781,30 @@
             // Section 1: Commitments
             addBoldText('SECTION 1: PERSONAL COMMITMENTS');
             y += 2;
+            
             addBoldText("Partner A's Commitment");
             addText(`Rule/Habit: ${document.getElementById('commitmentA').value}`);
             addText(`Details: ${document.getElementById('commitmentADetails').value}`);
             y += 3;
+            
             addBoldText("Partner B's Commitment");
             addText(`Rule/Habit: ${document.getElementById('commitmentB').value}`);
             addText(`Details: ${document.getElementById('commitmentBDetails').value}`);
+            y += 3;
+            
+            if (partnerCount >= 3) {
+                addBoldText("Partner C's Commitment");
+                addText(`Rule/Habit: ${document.getElementById('commitmentC').value}`);
+                addText(`Details: ${document.getElementById('commitmentCDetails').value}`);
+                y += 3;
+            }
+            
+            if (partnerCount >= 4) {
+                addBoldText("Partner D's Commitment");
+                addText(`Rule/Habit: ${document.getElementById('commitmentD').value}`);
+                addText(`Details: ${document.getElementById('commitmentDDetails').value}`);
+                y += 3;
+            }
             
             y += lineHeight;
             
@@ -654,6 +867,19 @@
             addText(`When Partner B does not meet their commitment:`);
             addText(`Penalty: ${document.getElementById('penaltyB').value}`);
             y += 3;
+            
+            if (partnerCount >= 3) {
+                addText(`When Partner C does not meet their commitment:`);
+                addText(`Penalty: ${document.getElementById('penaltyC').value}`);
+                y += 3;
+            }
+            
+            if (partnerCount >= 4) {
+                addText(`When Partner D does not meet their commitment:`);
+                addText(`Penalty: ${document.getElementById('penaltyD').value}`);
+                y += 3;
+            }
+            
             addBoldText('Important Reminders:');
             addText('• All penalties must be meaningful but not punitive');
             addText('• Penalties must respect dignity and wellbeing');
@@ -750,12 +976,18 @@
             addText('Partner B: ___________________________ Date: _______________');
             y += lineHeight * 2;
             
-            if (additionalPartners) {
-                addText('Additional Partner(s): ___________________________ Date: _______________');
+            if (partnerCount >= 3) {
+                addText('Partner C: ___________________________ Date: _______________');
                 y += lineHeight * 2;
             }
             
-            if (witnessName || !additionalPartners) {
+            if (partnerCount >= 4) {
+                addText('Partner D: ___________________________ Date: _______________');
+                y += lineHeight * 2;
+            }
+            
+            // Only include witness signature if there's a witness OR if it's a 2-person partnership
+            if (witnessName || partnerCount === 2) {
                 addText('Witness: ___________________________ Date: _______________');
                 addText('I have reviewed this Written Statement and confirm it complies with the DAN Charter.');
                 y += lineHeight * 2;
@@ -770,11 +1002,21 @@
             y += 5;
             doc.text('In case of any conflict between this Statement and the Charter, the Charter takes precedence.', 105, y, { align: 'center' });
             
-            // Save PDF
+            // Generate filename
             const partnerA = document.getElementById('partnerAName').value;
             const partnerB = document.getElementById('partnerBName').value;
             const date = document.getElementById('agreementDate').value;
-            doc.save(`DAN_Written_Statement_${partnerA}_${partnerB}_${date}.pdf`);
+            let filename = `DAN_Written_Statement_${partnerA}_${partnerB}`;
+            if (partnerCount >= 3) {
+                filename += `_${document.getElementById('partnerCName').value}`;
+            }
+            if (partnerCount >= 4) {
+                filename += `_${document.getElementById('partnerDName').value}`;
+            }
+            filename += `_${date}.pdf`;
+            
+            // Save PDF
+            doc.save(filename);
         });
     </script>
 </body>
