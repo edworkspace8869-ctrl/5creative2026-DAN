@@ -633,13 +633,39 @@
             } else if (letter === 'C') {
                 // If removing C and D exists, shift D to C
                 if (!document.getElementById('partnerDField').classList.contains('hidden')) {
+                    // Show C field if hidden
+                    document.getElementById('partnerCField').classList.remove('hidden');
+                    document.getElementById('partnerCName').required = true;
+                    document.getElementById('commitmentCField').classList.remove('hidden');
+                    document.getElementById('commitmentC').required = true;
+                    document.getElementById('commitmentCDetails').required = true;
+                    document.getElementById('penaltyCField').classList.remove('hidden');
+                    document.getElementById('penaltyCCat').required = true;
+                    document.getElementById('penaltyC').required = true;
+                    
+                    // Copy D values to C
                     document.getElementById('partnerCName').value = document.getElementById('partnerDName').value;
                     document.getElementById('commitmentC').value = document.getElementById('commitmentD').value;
                     document.getElementById('commitmentCDetails').value = document.getElementById('commitmentDDetails').value;
                     document.getElementById('penaltyCCat').value = document.getElementById('penaltyDCat').value;
                     document.getElementById('penaltyC').value = document.getElementById('penaltyD').value;
                     
-                    removePartner('D');
+                    // Remove D
+                    document.getElementById('partnerDField').classList.add('hidden');
+                    document.getElementById('partnerDName').value = '';
+                    document.getElementById('partnerDName').required = false;
+                    document.getElementById('commitmentDField').classList.add('hidden');
+                    document.getElementById('commitmentD').value = '';
+                    document.getElementById('commitmentD').required = false;
+                    document.getElementById('commitmentDDetails').value = '';
+                    document.getElementById('commitmentDDetails').required = false;
+                    document.getElementById('penaltyDField').classList.add('hidden');
+                    document.getElementById('penaltyDCat').value = '';
+                    document.getElementById('penaltyDCat').required = false;
+                    document.getElementById('penaltyD').value = '';
+                    document.getElementById('penaltyD').required = false;
+                    
+                    partnerCount = 3;
                 } else {
                     partnerCount = 2;
                 }
