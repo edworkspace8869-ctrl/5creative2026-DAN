@@ -153,6 +153,18 @@
         
         .partner-field-with-button input {
             flex: 1;
+            min-width: 0; /* Allows flex item to shrink below content size */
+        }
+
+        @media (max-width: 768px) {
+            .partner-field-with-button {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .partner-field-with-button .btn-remove {
+                width: 100%;
+            }
         }
         
         .btn-add,
