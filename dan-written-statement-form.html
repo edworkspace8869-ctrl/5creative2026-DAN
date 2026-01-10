@@ -153,7 +153,18 @@
         
         .partner-field-with-button input {
             flex: 1;
-            min-width: 0;
+            min-width: 0; /* Allows flex item to shrink below content size */
+        }
+
+        @media (max-width: 768px) {
+            .partner-field-with-button {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .partner-field-with-button .btn-remove {
+                width: 100%;
+            }
         }
         
         .btn-add,
@@ -185,6 +196,8 @@
         .btn-remove {
             background: #f56565;
             color: white;
+            min-width: 45px;
+            padding: 0.75rem;
         }
         
         .btn-remove:hover {
@@ -227,15 +240,6 @@
             background: #cbd5e0;
         }
         
-        .btn-preview {
-            background: #667eea;
-            color: white;
-        }
-        
-        .btn-preview:hover {
-            background: #5568d3;
-        }
-        
         .hidden {
             display: none;
         }
@@ -245,101 +249,9 @@
             margin-bottom: 0.5rem;
         }
         
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 2rem auto;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .modal-header h2 {
-            color: #667eea;
-            margin: 0;
-        }
-
-        .close {
-            color: #718096;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .close:hover {
-            color: #e53e3e;
-        }
-
-        .preview-section {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .preview-section:last-child {
-            border-bottom: none;
-        }
-
-        .preview-section h3 {
-            color: #667eea;
-            margin-bottom: 0.75rem;
-            font-size: 1.2rem;
-        }
-
-        .preview-section p {
-            margin: 0.5rem 0;
-            color: #4a5568;
-        }
-
-        .preview-section strong {
-            color: #2d3748;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            justify-content: flex-end;
-        }
-        
         @media (max-width: 768px) {
             .partner-inputs {
                 grid-template-columns: 1fr;
-            }
-            
-            .partner-field-with-button {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .partner-field-with-button .btn-remove {
-                width: 100%;
             }
             
             .button-group {
@@ -387,7 +299,7 @@
                     <label>Partner C Name *</label>
                     <div class="partner-field-with-button">
                         <input type="text" id="partnerCName">
-                        <button type="button" class="btn-remove" onclick="removePartner('C')">Remove</button>
+                        <button type="button" class="btn-remove" onclick="removePartner('C')" title="Remove Partner C">Remove</button>
                     </div>
                 </div>
                 
@@ -395,7 +307,7 @@
                     <label>Partner D Name *</label>
                     <div class="partner-field-with-button">
                         <input type="text" id="partnerDName">
-                        <button type="button" class="btn-remove" onclick="removePartner('D')">Remove</button>
+                        <button type="button" class="btn-remove" onclick="removePartner('D')" title="Remove Partner D">Remove</button>
                     </div>
                 </div>
                 
@@ -667,25 +579,9 @@
             <!-- Buttons -->
             <div class="button-group">
                 <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
-                <button type="button" class="btn-preview" onclick="showPreview()">Preview</button>
                 <button type="submit" class="btn-primary">Generate PDF</button>
             </div>
         </form>
-
-        <!-- Preview Modal -->
-        <div id="previewModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Written Statement Preview</h2>
-                    <span class="close" onclick="closePreview()">&times;</span>
-                </div>
-                <div id="previewContent"></div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" onclick="closePreview()">Close</button>
-                    <button type="button" class="btn-primary" onclick="generatePDFFromPreview()">Generate PDF</button>
-                </div>
-            </div>
-        </div>
     </div>
     
     <script>
@@ -773,4 +669,395 @@
                     document.getElementById('partnerDName').value = '';
                     document.getElementById('partnerDName').required = false;
                     document.getElementById('commitmentDField').classList.add('hidden');
-                    document.getElementById('
+                    document.getElementById('commitmentD').value = '';
+                    document.getElementById('commitmentD').required = false;
+                    document.getElementById('commitmentDDetails').value = '';
+                    document.getElementById('commitmentDDetails').required = false;
+                    document.getElementById('penaltyDField').classList.add('hidden');
+                    document.getElementById('penaltyDCat').value = '';
+                    document.getElementById('penaltyDCat').required = false;
+                    document.getElementById('penaltyD').value = '';
+                    document.getElementById('penaltyD').required = false;
+                    
+                    partnerCount = 3;
+                } else {
+                    partnerCount = 2;
+                }
+            }
+            
+            // Re-enable add button
+            document.getElementById('addPartnerBtn').disabled = false;
+            
+            // Update witness requirement
+            updateWitnessRequirement();
+        }
+        
+        // Update witness requirement text
+        function updateWitnessRequirement() {
+            const witnessReq = document.getElementById('witnessRequired');
+            if (partnerCount > 2) {
+                witnessReq.textContent = '(optional for 3+ person partnerships)';
+            } else {
+                witnessReq.textContent = '(required for 2-person partnerships)';
+            }
+        }
+        
+        // Show/hide fixed term inputs
+        document.querySelectorAll('input[name="duration"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const fixedInputs = document.getElementById('fixedTermInputs');
+                fixedInputs.classList.toggle('hidden', e.target.value !== 'fixed');
+            });
+        });
+        
+        // Show/hide reporting frequency other input
+        document.getElementById('reportingFreq').addEventListener('change', (e) => {
+            const otherInput = document.getElementById('reportingFreqOther');
+            const weeklyInput = document.getElementById('weeklyDay');
+            otherInput.classList.toggle('hidden', e.target.value !== 'other');
+            weeklyInput.classList.toggle('hidden', e.target.value !== 'weekly');
+        });
+        
+        // Show/hide reporting method other input
+        document.getElementById('reportingMethod').addEventListener('change', (e) => {
+            const otherInput = document.getElementById('reportingMethodOther');
+            otherInput.classList.toggle('hidden', e.target.value !== 'other');
+        });
+        
+        function resetForm() {
+            if (confirm('Are you sure you want to clear all fields?')) {
+                document.getElementById('statementForm').reset();
+                document.getElementById('agreementDate').valueAsDate = new Date();
+                
+                // Reset partner count
+                if (partnerCount > 2) {
+                    ['C', 'D'].forEach(letter => {
+                        if (!document.getElementById(`partner${letter}Field`).classList.contains('hidden')) {
+                            removePartner(letter);
+                        }
+                    });
+                }
+            }
+        }
+        
+        // PDF Generation
+        document.getElementById('statementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let y = 20;
+            const lineHeight = 7;
+            const pageHeight = 280;
+            const margin = 20;
+            
+            function checkPageBreak() {
+                if (y > pageHeight) {
+                    doc.addPage();
+                    y = 20;
+                }
+            }
+            
+            function addText(text, size = 11, style = 'normal') {
+                doc.setFontSize(size);
+                doc.setFont('helvetica', style);
+                const lines = doc.splitTextToSize(text, 170);
+                lines.forEach(line => {
+                    checkPageBreak();
+                    doc.text(line, margin, y);
+                    y += lineHeight;
+                });
+            }
+            
+            function addBoldText(text) {
+                addText(text, 11, 'bold');
+            }
+            
+            // Title
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('WRITTEN STATEMENT', 105, y, { align: 'center' });
+            y += lineHeight;
+            doc.setFontSize(12);
+            doc.text('Decentralised Accountability Network (DAN)', 105, y, { align: 'center' });
+            y += lineHeight * 2;
+            
+            // Date
+            addText(`Date of Agreement: ${document.getElementById('agreementDate').value}`);
+            y += lineHeight;
+            
+            // Partnership Information
+            addBoldText('PARTNERSHIP INFORMATION');
+            y += 2;
+            addText(`Partner A Name: ${document.getElementById('partnerAName').value}`);
+            addText(`Partner B Name: ${document.getElementById('partnerBName').value}`);
+            
+            if (partnerCount >= 3) {
+                addText(`Partner C Name: ${document.getElementById('partnerCName').value}`);
+            }
+            if (partnerCount >= 4) {
+                addText(`Partner D Name: ${document.getElementById('partnerDName').value}`);
+            }
+            
+            const witnessName = document.getElementById('witnessName').value;
+            if (witnessName) {
+                addText(`Witness Name: ${witnessName}`);
+            } else if (partnerCount === 2) {
+                addText(`Witness Name: _________________`);
+            }
+            
+            const duration = document.querySelector('input[name="duration"]:checked').value;
+            if (duration === 'indefinite') {
+                addText('Partnership Duration: Indefinite (until SPM or mutual dissolution)');
+            } else {
+                const from = document.getElementById('durationFrom').value;
+                const to = document.getElementById('durationTo').value;
+                addText(`Partnership Duration: Fixed term from ${from} to ${to}`);
+            }
+            
+            y += lineHeight;
+            
+            // Section 1: Commitments
+            addBoldText('SECTION 1: PERSONAL COMMITMENTS');
+            y += 2;
+            
+            addBoldText("Partner A's Commitment");
+            addText(`Rule/Habit: ${document.getElementById('commitmentA').value}`);
+            addText(`Details: ${document.getElementById('commitmentADetails').value}`);
+            y += 3;
+            
+            addBoldText("Partner B's Commitment");
+            addText(`Rule/Habit: ${document.getElementById('commitmentB').value}`);
+            addText(`Details: ${document.getElementById('commitmentBDetails').value}`);
+            y += 3;
+            
+            if (partnerCount >= 3) {
+                addBoldText("Partner C's Commitment");
+                addText(`Rule/Habit: ${document.getElementById('commitmentC').value}`);
+                addText(`Details: ${document.getElementById('commitmentCDetails').value}`);
+                y += 3;
+            }
+            
+            if (partnerCount >= 4) {
+                addBoldText("Partner D's Commitment");
+                addText(`Rule/Habit: ${document.getElementById('commitmentD').value}`);
+                addText(`Details: ${document.getElementById('commitmentDDetails').value}`);
+                y += 3;
+            }
+            
+            y += lineHeight;
+            
+            // Section 2: Reporting
+            addBoldText('SECTION 2: REPORTING PROTOCOL');
+            y += 2;
+            
+            let freqText = document.getElementById('reportingFreq').value;
+            if (freqText === 'daily') freqText = 'Daily';
+            else if (freqText === 'everyOther') freqText = 'Every other day';
+            else if (freqText === 'weekly') freqText = `Weekly (${document.getElementById('weeklyDay').value})`;
+            else if (freqText === 'other') freqText = document.getElementById('reportingFreqOther').value;
+            addText(`Reporting Frequency: ${freqText}`);
+            
+            let methodText = document.getElementById('reportingMethod').value;
+            if (methodText === 'whatsapp') methodText = 'WhatsApp message';
+            else if (methodText === 'inperson') methodText = 'In-person check-in';
+            else if (methodText === 'voice') methodText = 'Voice call';
+            else if (methodText === 'other') methodText = document.getElementById('reportingMethodOther').value;
+            addText(`Reporting Method: ${methodText}`);
+            
+            addText(`Reporting Format: ${document.getElementById('reportingFormat').value}`);
+            addText(`Reporting Deadline: ${document.getElementById('reportingDeadline').value}`);
+            
+            y += lineHeight;
+            
+            // Section 3: Rights and Responsibilities
+            addBoldText('SECTION 3: RIGHTS AND RESPONSIBILITIES');
+            y += 2;
+            addBoldText('All Partners Have the Right To:');
+            addText('• Receive honest reports from their accountability partner(s)');
+            addText('• Request clarification or support when struggling');
+            addText('• Propose modifications to commitments if they prove unrealistic');
+            addText('• Suspend or dissolve the partnership if it becomes non-nurturing');
+            addText('• Privacy regarding personal information beyond the scope of this agreement');
+            y += 3;
+            addBoldText('All Partners Have the Responsibility To:');
+            addText('• Submit honest, unilateral reports as agreed');
+            addText('• Support their partner(s) with encouragement and constructive feedback');
+            addText('• Inquire with compassion when partner(s) struggle');
+            addText("• Respect the autonomy and dignity of their partner(s)");
+            addText('• Uphold the principles of the DAN Charter');
+            
+            if (witnessName) {
+                y += 3;
+                addBoldText('Witness Responsibilities:');
+                addText('• Review this Statement to ensure compliance with the Charter');
+                addText('• Be available for mediation if both parties request assistance');
+                addText('• Maintain confidentiality of partnership matters');
+            }
+            
+            y += lineHeight;
+            
+            // Section 4: Penalties
+            addBoldText('SECTION 4: AGREED PENALTIES');
+            y += 2;
+            addText(`When Partner A does not meet their commitment:`);
+            addText(`Penalty: ${document.getElementById('penaltyA').value}`);
+            y += 3;
+            addText(`When Partner B does not meet their commitment:`);
+            addText(`Penalty: ${document.getElementById('penaltyB').value}`);
+            y += 3;
+            
+            if (partnerCount >= 3) {
+                addText(`When Partner C does not meet their commitment:`);
+                addText(`Penalty: ${document.getElementById('penaltyC').value}`);
+                y += 3;
+            }
+            
+            if (partnerCount >= 4) {
+                addText(`When Partner D does not meet their commitment:`);
+                addText(`Penalty: ${document.getElementById('penaltyD').value}`);
+                y += 3;
+            }
+            
+            addBoldText('Important Reminders:');
+            addText('• All penalties must be meaningful but not punitive');
+            addText('• Penalties must respect dignity and wellbeing');
+            addText('• Maximum financial penalty: RM10');
+            addText('• Prohibited: Humiliation, degradation, physical penalties, violations of school rules');
+            
+            y += lineHeight;
+            
+            // Section 5: Support Protocol
+            checkPageBreak();
+            addBoldText('SECTION 5: SUPPORT PROTOCOL');
+            y += 2;
+            addText('What should happen if I struggle to meet my commitment?');
+            addText('We agree that the accountability partner will:');
+            addText('1. Ask: "Is this rule too demanding?"');
+            addText('2. Discuss: Explore what\'s making it difficult');
+            addText('3. Collaborate: Identify alternative approaches or modifications');
+            addText('4. Prioritize: Focus on wellbeing over rigid enforcement');
+            y += 3;
+            addText('If penalties become difficult to fulfill, we agree to:');
+            if (document.getElementById('support1').checked) addText('• Discuss alternatives openly');
+            if (document.getElementById('support2').checked) addText('• Involve our witness for mediation');
+            if (document.getElementById('support3').checked) addText('• Modify the penalty with mutual consent');
+            if (document.getElementById('support4').checked) addText('• Reassess if this partnership remains nurturing');
+            
+            y += lineHeight;
+            
+            // Section 6: Conflict Resolution
+            checkPageBreak();
+            addBoldText('SECTION 6: CONFLICT RESOLUTION');
+            y += 2;
+            addText('If conflicts arise in this partnership, we agree to:');
+            addText('1. First attempt to resolve the issue between ourselves through honest communication');
+            addText('2. If both parties agree, involve our witness or another DAN member as mediator');
+            addText('3. If the partnership no longer feels nurturing, either party may initiate suspension or dissolution');
+            y += 3;
+            addText('Red flags we will watch for:');
+            addText('• Feeling pressured or coerced');
+            addText('• Penalties becoming punitive rather than supportive');
+            addText('• Resentment building in the relationship');
+            addText('• Loss of trust or honesty');
+            addText('• The partnership causing stress rather than support');
+            
+            y += lineHeight;
+            
+            // Section 7: Modification and Dissolution
+            checkPageBreak();
+            addBoldText('SECTION 7: MODIFICATION AND DISSOLUTION');
+            y += 2;
+            addText('Modifications to this Statement: Any changes to this Written Statement require agreement from all partners and must comply with the DAN Charter.');
+            y += 3;
+            addText('Suspension: Either party may temporarily suspend this partnership during conflicts. We will communicate openly about the suspension and attempt resolution.');
+            y += 3;
+            addText('Dissolution: Either party may dissolve this partnership if:');
+            addText('• The relationship no longer feels nurturing, AND');
+            addText('• We have attempted at least once to resolve issues');
+            addText('No further justification is required beyond these criteria.');
+            
+            y += lineHeight;
+            
+            // Section 8: Acknowledgment
+            checkPageBreak();
+            addBoldText('SECTION 8: ACKNOWLEDGMENT');
+            y += 2;
+            addText('We, the undersigned, acknowledge that:');
+            addText('• We have read and understood the DAN Charter');
+            addText('• This partnership is entirely voluntary');
+            addText('• All reports will be honest, unilateral declarations');
+            addText('• We understand that dishonesty deceives only our future selves');
+            addText('• This Statement does not contradict the DAN Charter');
+            addText('• We prioritize mutual support and personal growth over rigid rule enforcement');
+            addText("• We respect each other's autonomy, dignity, and privacy");
+            
+            y += lineHeight;
+            
+            // Notes
+            const notes = document.getElementById('notes').value;
+            if (notes) {
+                checkPageBreak();
+                addBoldText('NOTES & REFLECTIONS');
+                y += 2;
+                addText(notes);
+                y += lineHeight;
+            }
+            
+            // Signatures
+            checkPageBreak();
+            y += lineHeight;
+            addBoldText('SIGNATURES');
+            y += lineHeight;
+            
+            addText('Partner A: ___________________________ Date: _______________');
+            y += lineHeight * 2;
+            addText('Partner B: ___________________________ Date: _______________');
+            y += lineHeight * 2;
+            
+            if (partnerCount >= 3) {
+                addText('Partner C: ___________________________ Date: _______________');
+                y += lineHeight * 2;
+            }
+            
+            if (partnerCount >= 4) {
+                addText('Partner D: ___________________________ Date: _______________');
+                y += lineHeight * 2;
+            }
+            
+            // Only include witness signature if there's a witness OR if it's a 2-person partnership
+            if (witnessName || partnerCount === 2) {
+                addText('Witness: ___________________________ Date: _______________');
+                addText('I have reviewed this Written Statement and confirm it complies with the DAN Charter.');
+                y += lineHeight * 2;
+            }
+            
+            // Footer
+            checkPageBreak();
+            y += lineHeight;
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'italic');
+            doc.text('This Written Statement is governed by the Charter of the Decentralised Accountability Network (DAN).', 105, y, { align: 'center' });
+            y += 5;
+            doc.text('In case of any conflict between this Statement and the Charter, the Charter takes precedence.', 105, y, { align: 'center' });
+            
+            // Generate filename
+            const partnerA = document.getElementById('partnerAName').value;
+            const partnerB = document.getElementById('partnerBName').value;
+            const date = document.getElementById('agreementDate').value;
+            let filename = `DAN_Written_Statement_${partnerA}_${partnerB}`;
+            if (partnerCount >= 3) {
+                filename += `_${document.getElementById('partnerCName').value}`;
+            }
+            if (partnerCount >= 4) {
+                filename += `_${document.getElementById('partnerDName').value}`;
+            }
+            filename += `_${date}.pdf`;
+            
+            // Save PDF
+            doc.save(filename);
+        });
+    </script>
+</body>
+</html>
