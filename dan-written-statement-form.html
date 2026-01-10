@@ -153,18 +153,7 @@
         
         .partner-field-with-button input {
             flex: 1;
-            min-width: 0; /* Allows flex item to shrink below content size */
-        }
-
-        @media (max-width: 768px) {
-            .partner-field-with-button {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .partner-field-with-button .btn-remove {
-                width: 100%;
-            }
+            min-width: 0;
         }
         
         .btn-add,
@@ -196,8 +185,6 @@
         .btn-remove {
             background: #f56565;
             color: white;
-            min-width: 45px;
-            padding: 0.75rem;
         }
         
         .btn-remove:hover {
@@ -240,6 +227,15 @@
             background: #cbd5e0;
         }
         
+        .btn-preview {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-preview:hover {
+            background: #5568d3;
+        }
+        
         .hidden {
             display: none;
         }
@@ -249,9 +245,101 @@
             margin-bottom: 0.5rem;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+            margin: 0;
+        }
+
+        .close {
+            color: #718096;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #e53e3e;
+        }
+
+        .preview-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .preview-section:last-child {
+            border-bottom: none;
+        }
+
+        .preview-section h3 {
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .preview-section p {
+            margin: 0.5rem 0;
+            color: #4a5568;
+        }
+
+        .preview-section strong {
+            color: #2d3748;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+        
         @media (max-width: 768px) {
             .partner-inputs {
                 grid-template-columns: 1fr;
+            }
+            
+            .partner-field-with-button {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .partner-field-with-button .btn-remove {
+                width: 100%;
             }
             
             .button-group {
@@ -299,7 +387,7 @@
                     <label>Partner C Name *</label>
                     <div class="partner-field-with-button">
                         <input type="text" id="partnerCName">
-                        <button type="button" class="btn-remove" onclick="removePartner('C')" title="Remove Partner C">Remove</button>
+                        <button type="button" class="btn-remove" onclick="removePartner('C')">Remove</button>
                     </div>
                 </div>
                 
@@ -307,7 +395,7 @@
                     <label>Partner D Name *</label>
                     <div class="partner-field-with-button">
                         <input type="text" id="partnerDName">
-                        <button type="button" class="btn-remove" onclick="removePartner('D')" title="Remove Partner D">Remove</button>
+                        <button type="button" class="btn-remove" onclick="removePartner('D')">Remove</button>
                     </div>
                 </div>
                 
@@ -579,9 +667,25 @@
             <!-- Buttons -->
             <div class="button-group">
                 <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+                <button type="button" class="btn-preview" onclick="showPreview()">Preview</button>
                 <button type="submit" class="btn-primary">Generate PDF</button>
             </div>
         </form>
+
+        <!-- Preview Modal -->
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Written Statement Preview</h2>
+                    <span class="close" onclick="closePreview()">&times;</span>
+                </div>
+                <div id="previewContent"></div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" onclick="closePreview()">Close</button>
+                    <button type="button" class="btn-primary" onclick="generatePDFFromPreview()">Generate PDF</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -737,6 +841,127 @@
                         }
                     });
                 }
+            }
+        }
+
+        // Preview functions
+        function showPreview() {
+            const form = document.getElementById('statementForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            let previewHTML = '';
+            
+            // Partnership Information
+            previewHTML += '<div class="preview-section">';
+            previewHTML += '<h3>Partnership Information</h3>';
+            previewHTML += `<p><strong>Date:</strong> ${document.getElementById('agreementDate').value}</p>`;
+            previewHTML += `<p><strong>Partner A:</strong> ${document.getElementById('partnerAName').value}</p>`;
+            previewHTML += `<p><strong>Partner B:</strong> ${document.getElementById('partnerBName').value}</p>`;
+            
+            if (partnerCount >= 3) {
+                previewHTML += `<p><strong>Partner C:</strong> ${document.getElementById('partnerCName').value}</p>`;
+            }
+            if (partnerCount >= 4) {
+                previewHTML += `<p><strong>Partner D:</strong> ${document.getElementById('partnerDName').value}</p>`;
+            }
+            
+            const witnessName = document.getElementById('witnessName').value;
+            if (witnessName) {
+                previewHTML += `<p><strong>Witness:</strong> ${witnessName}</p>`;
+            }
+            
+            const duration = document.querySelector('input[name="duration"]:checked').value;
+            if (duration === 'indefinite') {
+                previewHTML += '<p><strong>Duration:</strong> Indefinite (until SPM or mutual dissolution)</p>';
+            } else {
+                previewHTML += `<p><strong>Duration:</strong> ${document.getElementById('durationFrom').value} to ${document.getElementById('durationTo').value}</p>`;
+            }
+            previewHTML += '</div>';
+            
+            // Commitments
+            previewHTML += '<div class="preview-section">';
+            previewHTML += '<h3>Personal Commitments</h3>';
+            previewHTML += `<p><strong>Partner A:</strong> ${document.getElementById('commitmentA').value}</p>`;
+            previewHTML += `<p style="margin-left: 1rem; color: #718096;">${document.getElementById('commitmentADetails').value}</p>`;
+            previewHTML += `<p><strong>Partner B:</strong> ${document.getElementById('commitmentB').value}</p>`;
+            previewHTML += `<p style="margin-left: 1rem; color: #718096;">${document.getElementById('commitmentBDetails').value}</p>`;
+            
+            if (partnerCount >= 3) {
+                previewHTML += `<p><strong>Partner C:</strong> ${document.getElementById('commitmentC').value}</p>`;
+                previewHTML += `<p style="margin-left: 1rem; color: #718096;">${document.getElementById('commitmentCDetails').value}</p>`;
+            }
+            if (partnerCount >= 4) {
+                previewHTML += `<p><strong>Partner D:</strong> ${document.getElementById('commitmentD').value}</p>`;
+                previewHTML += `<p style="margin-left: 1rem; color: #718096;">${document.getElementById('commitmentDDetails').value}</p>`;
+            }
+            previewHTML += '</div>';
+            
+            // Reporting Protocol
+            previewHTML += '<div class="preview-section">';
+            previewHTML += '<h3>Reporting Protocol</h3>';
+            
+            let freqText = document.getElementById('reportingFreq').value;
+            if (freqText === 'daily') freqText = 'Daily';
+            else if (freqText === 'everyOther') freqText = 'Every other day';
+            else if (freqText === 'weekly') freqText = `Weekly (${document.getElementById('weeklyDay').value})`;
+            else if (freqText === 'other') freqText = document.getElementById('reportingFreqOther').value;
+            
+            let methodText = document.getElementById('reportingMethod').value;
+            if (methodText === 'whatsapp') methodText = 'WhatsApp message';
+            else if (methodText === 'inperson') methodText = 'In-person check-in';
+            else if (methodText === 'voice') methodText = 'Voice call';
+            else if (methodText === 'other') methodText = document.getElementById('reportingMethodOther').value;
+            
+            previewHTML += `<p><strong>Frequency:</strong> ${freqText}</p>`;
+            previewHTML += `<p><strong>Method:</strong> ${methodText}</p>`;
+            previewHTML += `<p><strong>Format:</strong> ${document.getElementById('reportingFormat').value}</p>`;
+            previewHTML += `<p><strong>Deadline:</strong> ${document.getElementById('reportingDeadline').value}</p>`;
+            previewHTML += '</div>';
+            
+            // Penalties
+            previewHTML += '<div class="preview-section">';
+            previewHTML += '<h3>Agreed Penalties</h3>';
+            previewHTML += `<p><strong>Partner A:</strong> ${document.getElementById('penaltyA').value}</p>`;
+            previewHTML += `<p><strong>Partner B:</strong> ${document.getElementById('penaltyB').value}</p>`;
+            
+            if (partnerCount >= 3) {
+                previewHTML += `<p><strong>Partner C:</strong> ${document.getElementById('penaltyC').value}</p>`;
+            }
+            if (partnerCount >= 4) {
+                previewHTML += `<p><strong>Partner D:</strong> ${document.getElementById('penaltyD').value}</p>`;
+            }
+            previewHTML += '</div>';
+            
+            // Notes
+            const notes = document.getElementById('notes').value;
+            if (notes) {
+                previewHTML += '<div class="preview-section">';
+                previewHTML += '<h3>Notes & Reflections</h3>';
+                previewHTML += `<p>${notes}</p>`;
+                previewHTML += '</div>';
+            }
+            
+            document.getElementById('previewContent').innerHTML = previewHTML;
+            document.getElementById('previewModal').style.display = 'block';
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        function generatePDFFromPreview() {
+            closePreview();
+            document.getElementById('statementForm').dispatchEvent(new Event('submit'));
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                closePreview();
             }
         }
         
